@@ -2,7 +2,6 @@ import requests
 sender_id = None
 
 
-
 class Image:
     def __init__(self, link):
         self.url = link
@@ -49,8 +48,6 @@ class Card:
       }}}
 
 
-
-
 class Text:
     def __init__(self, text):
         self.text = text
@@ -71,13 +68,9 @@ class Button:
         return {"text": self.title, "quick_replies": self.buttons}
 
 
-
-
-
-
-
-
-
+class Flow:
+    def __init__(self, name, **config):
+        pass
 
 
 class Smartly:
@@ -118,6 +111,10 @@ class Smartly:
             pass
         else:
             pass
+
+
+class Database:
+    pass
 
 
 

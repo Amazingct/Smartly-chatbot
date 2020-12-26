@@ -1,7 +1,19 @@
 from smartly import Smartly, Text, Button, Image, Card
+from Models import Tagger
+import pickle, json
+from keras.models import load_model
 from flask import Flask, request
+verifyToken = "amazingct"
 app = Flask(__name__)
 image_url = "https://scontent.flos5-1.fna.fbcdn.net/v/t1.0-9/120101610_102735164929182_997212438658305435_o.jpg?_nc_cat=109&ccb=2&_nc_sid=e3f864&_nc_eui2=AeGnZk5OnOgfCyg6ZZk_yl-oP_W4FNqvccc_9bgU2q9xx6Ro-9cCQE-KNL8k1qP0bE6yA6-b1d2g5LJNXpZW9JgW&_nc_ohc=EqdCyRNeQlQAX8ESh3c&_nc_ht=scontent.flos5-1.fna&oh=fdf28ee2087e05912fd74bed382ef910&oe=600C3CF7"
+
+dataset = json.loads(open('/home/amazing/Documents/Smartly-chatbot/Models/datasets/intents.json').read())
+model_words = pickle.load(open('/home/amazing/Documents/Smartly-chatbot/Models/models/amazing_words.pkl', 'rb'))
+model_classes = pickle.load(open('/home/amazing/Documents/Smartly-chatbot/Models/models/amazing_classes.pkl', 'rb'))
+model = load_model("/home/amazing/Documents/Smartly-chatbot/Models/models/amazing.h5")
+
+tag = Tagger(dataset, model, model_words, model_classes)
+
 
 
 class Chatbot(Smartly):
@@ -9,7 +21,14 @@ class Chatbot(Smartly):
         super().__init__(platform = platform, name= name, token = token)
 
     def generate_response(self, message):
-        if message == "text":
+        intent = tag.predict_class(message)
+        print(intent)
+        reply = tag.getResponse(intent)
+        response = Text(reply).message()
+        return response
+
+    '''
+          if message == "text":
             try:
                 name = chatbot.get_sender_info()["last_name"]
             except:
@@ -38,13 +57,18 @@ class Chatbot(Smartly):
             response = c.message()
 
         return response
+    '''
+
+
+
+
+
 
 
 chatbot = Chatbot(platform="messenger", name = "Smartly",
                   token='EAALa1uQGPg8BAIwAyFNAWSMzslR8Vu2qnkHmZBNOkYojzAsfb9ZBlmclE8SHvRCD5dSeijBGYZCxpfhuglL'
                         'aZCbusczNiZAS9QMoh7MbeJRveYDrZBZATTuTh6tCL3xjLZA1'
                         'Us7LhR5jZCKF0vwIStJr3ZAfFnm6rd0lXZBYL8Mk38q5ahFaar2aZC0M')
-
 
 @app.route('/')
 def hello_world():
@@ -56,7 +80,7 @@ def hello_world():
 def webhook_authorization():
     verify_token = request.args.get("hub.verify_token")
     # Check if sent token is correct
-    if verify_token == "amazingct":
+    if verify_token == verifyToken:
         # Responds with the challenge token from the request
         return request.args.get("hub.challenge")
     return 'Unable to authorize.'
