@@ -7,7 +7,7 @@ verifyToken = "amazingct"
 app = Flask(__name__)
 image_url = "https://scontent.flos5-1.fna.fbcdn.net/v/t1.0-9/120101610_102735164929182_997212438658305435_o.jpg?_nc_cat=109&ccb=2&_nc_sid=e3f864&_nc_eui2=AeGnZk5OnOgfCyg6ZZk_yl-oP_W4FNqvccc_9bgU2q9xx6Ro-9cCQE-KNL8k1qP0bE6yA6-b1d2g5LJNXpZW9JgW&_nc_ohc=EqdCyRNeQlQAX8ESh3c&_nc_ht=scontent.flos5-1.fna&oh=fdf28ee2087e05912fd74bed382ef910&oe=600C3CF7"
 
-dataset = json.loads(open('/home/amazing/Documents/Smartly-chatbot/Models/datasets/intents.json').read())
+dataset = json.loads(open('/home/amazing/Documents/Smartly-chatbot/Models/datasets/amazing.json').read())
 model_words = pickle.load(open('/home/amazing/Documents/Smartly-chatbot/Models/models/amazing_words.pkl', 'rb'))
 model_classes = pickle.load(open('/home/amazing/Documents/Smartly-chatbot/Models/models/amazing_classes.pkl', 'rb'))
 model = load_model("/home/amazing/Documents/Smartly-chatbot/Models/models/amazing.h5")
