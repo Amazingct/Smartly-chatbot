@@ -1,4 +1,7 @@
 import requests
+sender_id = None
+
+
 
 class Image:
     def __init__(self, link):
@@ -84,11 +87,18 @@ class Smartly:
         self.platform = platform
         self.config = config
 
+    def get_sender_info(self):
+        info = requests.get(
+            "https://graph.facebook.com/{}?fields=first_name,last_name,profile_pic&access_token={}".format(sender_id,
+                                                                                                self.config['token'])).json()
+        return info
+
     def generate_response(self, message):
         # do any AI stuff  here
         print("generating reply...")
 
     def reply(self, data):
+        global sender_id
         ##### message from messenger ######
         if self.platform == "messenger":
             try:
