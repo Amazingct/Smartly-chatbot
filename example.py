@@ -10,8 +10,12 @@ class Chatbot(Smartly):
 
     def generate_response(self, message):
         if message == "text":
+            try:
+                name = chatbot.get_sender_info()["last_name"]
+            except:
+                name = ""
             response = Text("Hello {}, my name is {}, I am Mr Dan's personal AI assistance,"
-                            " how may i help you today?".format(chatbot.get_sender_info()["last_name"],self.name)).message()
+                            " how may i help you today?".format(name, self.name)).message()
 
         elif message == "image":
             response = Image(image_url).message()
