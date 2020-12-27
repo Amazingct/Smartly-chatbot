@@ -86,7 +86,7 @@ class Smartly:
                                                                                                 self.config['token'])).json()
         return info
 
-    def generate_response(self, message):
+    def generate_response(self, message, sender=None):
         # do any AI stuff  here
         print("generating reply...")
 
@@ -98,7 +98,7 @@ class Smartly:
                 message = data['entry'][0]['messaging'][0]['message']["text"].lower()
                 print("received >> ", message)
                 sender_id = data['entry'][0]['messaging'][0]['sender']['id']
-                reply = self.generate_response(message)
+                reply = self.generate_response(message, sender_id)
                 request_body = {'recipient': {'id': sender_id},'message':reply }
                 response = requests.post('https://graph.facebook.com/v9.0/me/messages?access_token=' + self.config['token'], json=request_body).json()
                 print("sent >> ", reply)

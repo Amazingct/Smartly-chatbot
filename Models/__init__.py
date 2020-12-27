@@ -1,7 +1,9 @@
 import nltk
+from smartly import Text, Button, Card
 from nltk.stem import WordNetLemmatizer
 from keras.models import load_model
 lemmatizer = WordNetLemmatizer()
+sender_ids = []
 import json
 import pickle
 import numpy as np
@@ -9,6 +11,7 @@ from keras.models import Sequential
 from keras.layers import Dense, Activation, Dropout
 from keras.optimizers import SGD
 import random
+
 
 def create_model(dataset, name):
     words = []
@@ -95,13 +98,46 @@ def create_model(dataset, name):
     print("model created")
 
 
-
 class Tagger:
-    def __init__(self, intents_dataset, model, words, classes):
+    def __init__(self, dataset, model):
+        words = []
+        classes = []
+        documents = []
+        ignore_words = ['?', '!', ',']
+        intents = dataset
+        for intent in intents['intents']:
+            for pattern in intent['patterns']:
+                # tokenize each word
+                w = nltk.word_tokenize(pattern)
+                words.extend(w)
+                # add documents in the corpus
+                documents.append((w, intent['tag']))
+
+                # add to our classes list
+                if intent['tag'] not in classes:
+                    classes.append(intent['tag'])
+
+        # lemmaztize and lower each word and remove duplicates
+        words = [lemmatizer.lemmatize(w.lower()) for w in words if w not in ignore_words]
+        words = sorted(list(set(words)))
+        # sort classes
+        classes = sorted(list(set(classes)))
+        # documents = combination between patterns and intents
+        print(len(documents), "documents")
+        # classes = intents
+        print(len(classes), "classes", classes)
+        # words = all words, vocabulary
+        print(len(words), "unique lemmatized words", words)
+
+        pickle.dump(words, open('/home/amazing/Documents/Smartly-chatbot/Models/models/{}_words.pkl'.format("_"), 'wb'))
+        pickle.dump(classes, open('/home/amazing/Documents/Smartly-chatbot/Models/models/{}_classes.pkl'.format("_"), 'wb'))
+
+        self.words = pickle.load(open('/home/amazing/Documents/Smartly-chatbot/Models/models/__words.pkl', 'rb'))
+        self.classes = pickle.load(
+            open('/home/amazing/Documents/Smartly-chatbot/Models/models/__classes.pkl', 'rb'))
         self.model = model
-        self.words = words
-        self.intents_dataset = intents_dataset
-        self.classes = classes
+        self.intents_dataset = dataset
+
 
     def clean_up_sentence(self, sentence):
         # tokenize the pattern - split words into array
@@ -129,6 +165,7 @@ class Tagger:
     def predict_class(self, sentence):
         # filter out predictions below a threshold
         p = self.bow(sentence,  show_details=True)
+        print(p)
         res = self.model.predict(np.array([p]))[0]
         ERROR_THRESHOLD = 0.25
         for i,r in enumerate(res):
@@ -141,14 +178,54 @@ class Tagger:
             return_list.append({"intent": self.classes[r[0]], "probability": str(r[1])})
         return return_list
 
-    def getResponse(self, ints):
+    def getResponse(self, ints, sender=None):
         tag = ints[0]['intent']
         list_of_intents = self.intents_dataset['intents']
         for i in list_of_intents:
-            if (i['tag'] == tag):
-                result = random.choice(i['responses'])
+            if i['tag'] == tag:
+                r = Text(random.choice(i['responses'])).message()
                 break
-        return result
+        return r
+
+
+
+class Flow:
+    def __init__(self, dataset, model):
+        self.trigger = model
+        self.contents = []
+        self.lenght = 0
+        self.flow_active = False
+        self.flow_count = 0
+
+    def launch_flow(self, flow, sender=None):
+        global flow_active, flow_count
+        flow_active = True
+        print("flow found!")
+        # return first content
+        content_count = len(flow)
+        if flow_count <= (content_count - 1):
+            r = flow[flow_count]
+            flow_count = flow_count + 1
+        # reach end of list
+        else:
+            flow_active = False
+            r = None
+        return r
+
+    def add(self, objects):
+        for obj in objects:
+            self.contents.append(obj)
+            self.lenght = len(self.contents)
+
+
+    def addFlow(self, flows):
+        for flow in flows:
+            self.flows.update({flow.trigger:flow.contents})
+
+    def startFlows(self, trigger):
+        for trig, flow in self.flows.items():
+            if trig == trigger:
+                self.activeFlows.update({trig:flow})
 
 
 
