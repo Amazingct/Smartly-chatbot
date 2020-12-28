@@ -20,4 +20,3 @@ nltk
 keras
 tensorflow
 random
-requests
