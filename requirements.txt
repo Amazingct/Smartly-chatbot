@@ -17,4 +17,3 @@ Werkzeug==0.15.1
 nltk
 keras
 tensorflow
-random
