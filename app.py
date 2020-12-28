@@ -13,6 +13,9 @@ model = load_model("/home/amazing/Documents/Smartly-chatbot/Models/models/amazin
 
 tag = Tagger(dataset, model)
 flow = Flow(dataset, model)
+import nltk
+nltk.download()
+
 
 
 '''
