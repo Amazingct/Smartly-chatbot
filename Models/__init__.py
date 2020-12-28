@@ -192,10 +192,8 @@ class Tagger:
 class Flow:
     def __init__(self, dataset, model):
         self.trigger = model
-        self.contents = []
-        self.lenght = 0
-        self.flow_active = False
-        self.flow_count = 0
+        self.datset = dataset
+        self.sates = {"active": False, "count": 0, "sender": ""}
 
     def launch_flow(self, flow, sender=None):
         global flow_active, flow_count
