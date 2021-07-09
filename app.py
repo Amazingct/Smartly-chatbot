@@ -115,6 +115,10 @@ def webhook_handle():
         return response
     return 'ok'
 
+@app.route("/gas", methods=['POST'])
+def webhook_handle():
+    return 'ok gas man'
+
 
 if __name__ == "__main__":
     app.run()
