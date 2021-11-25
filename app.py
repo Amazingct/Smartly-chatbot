@@ -87,9 +87,7 @@ class Chatbot(Smartly):
 
 
 chatbot = Chatbot(platform="messenger", name = "Smartly",
-                  token='EAALa1uQGPg8BAIwAyFNAWSMzslR8Vu2qnkHmZBNOkYojzAsfb9ZBlmclE8SHvRCD5dSeijBGYZCxpfhuglL'
-                        'aZCbusczNiZAS9QMoh7MbeJRveYDrZBZATTuTh6tCL3xjLZA1'
-                        'Us7LhR5jZCKF0vwIStJr3ZAfFnm6rd0lXZBYL8Mk38q5ahFaar2aZC0M')
+                  token='')
 
 @app.route('/')
 def hello_world():
